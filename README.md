@@ -1,206 +1,117 @@
-# Foundry Template [![Open in Gitpod][gitpod-badge]][gitpod] [![Github Actions][gha-badge]][gha] [![Foundry][foundry-badge]][foundry] [![License: MIT][license-badge]][license]
 
-[gitpod]: https://gitpod.io/#https://github.com/PaulRBerg/foundry-template
-[gitpod-badge]: https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-FFB45B?logo=gitpod
-[gha]: https://github.com/PaulRBerg/foundry-template/actions
-[gha-badge]: https://github.com/PaulRBerg/foundry-template/actions/workflows/ci.yml/badge.svg
-[foundry]: https://getfoundry.sh/
-[foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
-[license]: https://opensource.org/licenses/MIT
-[license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
+# **Efficient Token Swapping with Uniswap V3: A Foundry-Based Implementation**
 
-A Foundry-based template for developing Solidity smart contracts, with sensible defaults.
 
-## What's Inside
+This project utilizes [PaulRBerg's foundry-template](https://github.com/PaulRBerg/foundry-template), a Foundry-based template for developing Solidity smart contracts with sensible defaults.
 
-- [Forge](https://github.com/foundry-rs/foundry/blob/master/forge): compile, test, fuzz, format, and deploy smart
-  contracts
-- [Forge Std](https://github.com/foundry-rs/forge-std): collection of helpful contracts and cheatcodes for testing
-- [PRBTest](https://github.com/PaulRBerg/prb-test): modern collection of testing assertions and logging utilities
-- [Prettier](https://github.com/prettier/prettier): code formatter for non-Solidity files
-- [Solhint](https://github.com/protofire/solhint): linter for Solidity code
+The provided documentation and code give an in-depth look into a Uniswap V3 swap operation using Foundry, a smart contract development tool. Let's break down the essentials.
 
-## Getting Started
+### Uniswap V3 Swap
 
-Click the [`Use this template`](https://github.com/PaulRBerg/foundry-template/generate) button at the top of the page to
-create a new repository with this repo as the initial state.
+The Uniswap V3 swap functionality is encapsulated within the `UniswapV3Swap` contract. This contract demonstrates two primary methods of swapping tokens on the Uniswap V3 protocol: single-hop and multi-hop swaps. Uniswap V3 introduces concentrated liquidity, allowing liquidity providers to allocate their funds to specific price ranges, thus making swaps more capital efficient, especially in targeted price ranges.
 
-Or, if you prefer to install the template manually:
+### Single-hop Swap
 
-```sh
-$ mkdir my-project
-$ cd my-project
-$ forge init --template PaulRBerg/foundry-template
-$ bun install # install Solhint, Prettier, and other Node.js deps
-```
+The `swapExactInputSingleHop` function is designed for a direct swap between two tokens within a single liquidity pool. It takes the addresses of the input and output tokens, the pool's fee tier, and the amount of the input token to swap. The function then constructs a swap parameters struct, calls the Uniswap V3 router's `exactInputSingle` method, and returns the amount of the output token received. This operation is typically more gas-efficient than multi-hop swaps when a direct pool exists between the desired tokens.
 
-If this is your first time with Foundry, check out the
-[installation](https://github.com/foundry-rs/foundry#installation) instructions.
+### Multi-hop Swap
 
-## Features
+The `swapExactInputMultiHop` function facilitates a swap that can route through multiple pools to convert an input token to an output token, potentially involving intermediary tokens. This is useful when no direct pool exists between the input and output tokens or when a multi-hop route offers better pricing. The function accepts an encoded path of tokens and pool fees, alongside the amount of the input token, to dynamically determine the swap route. It then calls the Uniswap V3 router's `exactInput` method with these parameters.
 
-This template builds upon the frameworks and libraries mentioned above, so please consult their respective documentation
-for details about their specific features.
+### Testing with Foundry
 
-For example, if you're interested in exploring Foundry in more detail, you should look at the
-[Foundry Book](https://book.getfoundry.sh/). In particular, you may be interested in reading the
-[Writing Tests](https://book.getfoundry.sh/forge/writing-tests.html) tutorial.
+The testing contract, `UniV3SwapTest`, uses Foundry's `PRBTest` for assertions and `StdCheats` for blockchain state manipulation, such as forking mainnet. This setup allows testing the `UniswapV3Swap` contract under real-world conditions by interacting with actual Uniswap V3 pools on the mainnet (via a forked environment).
 
-### Sensible Defaults
+- **Setup**: Initializes a fork of the Ethereum mainnet and deploys the `UniswapV3Swap` contract within this test environment.
+- **Test Functions**: Two test functions correspond to the single-hop and multi-hop swap functionalities. Each test deposits ETH into WETH (a common practice for interacting with DeFi protocols), approves the `UniswapV3Swap` contract to spend the WETH, and performs the swap. The output tokens received (DAI in the single-hop test, DAI via USDC in the multi-hop test) are logged for verification.
 
-This template comes with a set of sensible default configurations for you to use. These defaults can be found in the
-following files:
+### Essential Commands
 
-```text
-├── .editorconfig
-├── .gitignore
-├── .prettierignore
-├── .prettierrc.yml
-├── .solhint.json
-├── foundry.toml
-└── remappings.txt
-```
+Commands for setting up the Foundry environment, building and testing the smart contracts, deploying them to a testnet or local development environment, and generating UML diagrams for better understanding the contract's structure and storage layout.
 
-### VSCode Integration
+**Getting Started**
 
-This template is IDE agnostic, but for the best user experience, you may want to use it in VSCode alongside Nomic
-Foundation's [Solidity extension](https://marketplace.visualstudio.com/items?itemName=NomicFoundation.hardhat-solidity).
+1. Create a new directory:
+   ```
+   $ mkdir uniswap-v3-foundry
+   $ cd uniswap-v3-foundry
+   ```
 
-For guidance on how to integrate a Foundry project in VSCode, please refer to this
-[guide](https://book.getfoundry.sh/config/vscode).
+2. Initialize the project with the foundry-template:
+   ```
+   $ forge init --template PaulRBerg/foundry-template
+   ```
 
-### GitHub Actions
+3. Install dependencies (Solhint, Prettier, and other Node.js dependencies):
+   ```
+   $ bun install
+   ```
 
-This template comes with GitHub Actions pre-configured. Your contracts will be linted and tested on every push and pull
-request made to the `main` branch.
+**Building and Testing**
 
-You can edit the CI script in [.github/workflows/ci.yml](./.github/workflows/ci.yml).
+- Build the contracts:
+  ```
+  $ forge build
+  ```
 
-## Installing Dependencies
+- Delete the build artifacts and cache directories:
+  ```
+  $ forge clean
+  ```
 
-Foundry typically uses git submodules to manage dependencies, but this template uses Node.js packages because
-[submodules don't scale](https://twitter.com/PaulRBerg/status/1736695487057531328).
+- Get a test coverage report:
+  ```
+  $ forge coverage
+  ```
 
-This is how to install dependencies:
+- Run the tests:
+  ```
+  $ forge test
+  $ forge test --match-path test/UniswapV3Swap.t.sol
+  ```
 
-1. Install the dependency using your preferred package manager, e.g. `bun install dependency-name`
-   - Use this syntax to install from GitHub: `bun install github:username/repo-name`
-2. Add a remapping for the dependency in [remappings.txt](./remappings.txt), e.g.
-   `dependency-name=node_modules/dependency-name`
+- Get a gas report:
+  ```
+  $ forge test --gas-report 
+  ```
 
-Note that OpenZeppelin Contracts is pre-installed, so you can follow that as an example.
+**Deployment**
 
-## Writing Tests
+- Deploy to testnet:
+  - Load the variables in the .env file:
+    ```
+    $ source .env
+    ```
+  - Deploy and verify the contract:
+    ```
+    $ forge script script/DeployUniV3Swap.s.sol --rpc-url sepolia --broadcast --verify -vvvv
+    ```
 
-To write a new test contract, you start by importing [PRBTest](https://github.com/PaulRBerg/prb-test) and inherit from
-it in your test contract. PRBTest comes with a pre-instantiated [cheatcodes](https://book.getfoundry.sh/cheatcodes/)
-environment accessible via the `vm` property. If you would like to view the logs in the terminal output you can add the
-`-vvv` flag and use [console.log](https://book.getfoundry.sh/faq?highlight=console.log#how-do-i-use-consolelog).
+- Deploy to Anvil:
+  ```
+  $ forge script script/Deploy.s.sol --broadcast --fork-url http://localhost:8545
+  ```
 
-This template comes with an example test contract [Foo.t.sol](./test/Foo.t.sol)
+**Additional Tools**
 
-## Usage
+This project also utilizes the Solidity 2 UML tool available at [https://github.com/naddison36/sol2uml](https://github.com/naddison36/sol2uml).
 
-This is a list of the most frequently needed commands.
+- To check the version of sol2uml:
+  ```
+  $ npm ls sol2uml -g
+  ```
 
-### Build
+- To generate a class diagram:
+  ```
+  $ sol2uml class ./src/UniswapV3Swap.sol
+  ```
 
-Build the contracts:
+- To generate a storage diagram:
+  ```
+  $ sol2uml storage -c UniswapV3Swap ./src/UniswapV3Swap.sol
+  ```
 
-```sh
-$ forge build
-```
 
-### Clean
+### Final Notes
 
-Delete the build artifacts and cache directories:
-
-```sh
-$ forge clean
-```
-
-### Compile
-
-Compile the contracts:
-
-```sh
-$ forge build
-```
-
-### Coverage
-
-Get a test coverage report:
-
-```sh
-$ forge coverage
-```
-
-### Deploy
-
-Deploy to Anvil:
-
-```sh
-$ forge script script/Deploy.s.sol --broadcast --fork-url http://localhost:8545
-```
-
-For this script to work, you need to have a `MNEMONIC` environment variable set to a valid
-[BIP39 mnemonic](https://iancoleman.io/bip39/).
-
-For instructions on how to deploy to a testnet or mainnet, check out the
-[Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting.html) tutorial.
-
-### Format
-
-Format the contracts:
-
-```sh
-$ forge fmt
-```
-
-### Gas Usage
-
-Get a gas report:
-
-```sh
-$ forge test --gas-report
-```
-
-### Lint
-
-Lint the contracts:
-
-```sh
-$ bun run lint
-```
-
-### Test
-
-Run the tests:
-
-```sh
-$ forge test
-```
-
-Generate test coverage and output result to the terminal:
-
-```sh
-$ bun run test:coverage
-```
-
-Generate test coverage with lcov report (you'll have to open the `./coverage/index.html` file in your browser, to do so
-simply copy paste the path):
-
-```sh
-$ bun run test:coverage:report
-```
-
-## Related Efforts
-
-- [abigger87/femplate](https://github.com/abigger87/femplate)
-- [cleanunicorn/ethereum-smartcontract-template](https://github.com/cleanunicorn/ethereum-smartcontract-template)
-- [foundry-rs/forge-template](https://github.com/foundry-rs/forge-template)
-- [FrankieIsLost/forge-template](https://github.com/FrankieIsLost/forge-template)
-
-## License
-
-This project is licensed under MIT.
+This comprehensive setup demonstrates not just the implementation of Uniswap V3 swaps but also an efficient development, testing, and deployment workflow using Foundry. The use of real-world token addresses (WETH, DAI, USDC) and the ability to test against the mainnet via forking provide a robust framework for developing and verifying DeFi smart contracts.
