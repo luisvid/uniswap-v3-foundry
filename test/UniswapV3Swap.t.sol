@@ -19,7 +19,7 @@ contract UniV3SwapTest is PRBTest, StdCheats {
     UniswapV3Swap private uni;
 
     // the identifiers of the forks
-    uint256 mainnetFork;
+    uint256 private mainnetFork;
 
     function setUp() public {
         // Access the RPC URL from environment variables

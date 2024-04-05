@@ -2,7 +2,7 @@
 pragma solidity ^0.8.23;
 
 contract UniswapV3Swap {
-    ISwapRouter constant router = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
+    ISwapRouter private constant ROUTER = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
 
     function swapExactInputSingleHop(
         address tokenIn,
@@ -14,7 +14,7 @@ contract UniswapV3Swap {
         returns (uint256 amountOut)
     {
         IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn);
-        IERC20(tokenIn).approve(address(router), amountIn);
+        IERC20(tokenIn).approve(address(ROUTER), amountIn);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
             tokenIn: tokenIn,
@@ -27,7 +27,7 @@ contract UniswapV3Swap {
             sqrtPriceLimitX96: 0
         });
 
-        amountOut = router.exactInputSingle(params);
+        amountOut = ROUTER.exactInputSingle(params);
     }
 
     function swapExactInputMultiHop(
@@ -39,7 +39,7 @@ contract UniswapV3Swap {
         returns (uint256 amountOut)
     {
         IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn);
-        IERC20(tokenIn).approve(address(router), amountIn);
+        IERC20(tokenIn).approve(address(ROUTER), amountIn);
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             path: path,
@@ -48,7 +48,7 @@ contract UniswapV3Swap {
             amountIn: amountIn,
             amountOutMinimum: 0
         });
-        amountOut = router.exactInput(params);
+        amountOut = ROUTER.exactInput(params);
     }
 }
 
