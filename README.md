@@ -51,12 +51,14 @@ storage layout.
 **Getting Started**
 
 1. Create a new directory:
+
    ```
    $ mkdir uniswap-v3-foundry
    $ cd uniswap-v3-foundry
    ```
 
 2. Initialize the project with the foundry-template:
+
    ```
    $ forge init --template PaulRBerg/foundry-template
    ```
@@ -69,21 +71,25 @@ storage layout.
 **Building and Testing**
 
 - Build the contracts:
+
   ```
   $ forge build
   ```
 
 - Delete the build artifacts and cache directories:
+
   ```
   $ forge clean
   ```
 
 - Get a test coverage report:
+
   ```
   $ forge coverage
   ```
 
 - Run the tests:
+
   ```
   $ forge test
   $ forge test --match-path test/UniswapV3Swap.t.sol
@@ -97,6 +103,7 @@ storage layout.
 **Deployment**
 
 - Deploy to testnet:
+
   - Load the variables in the .env file:
     ```
     $ source .env
@@ -123,6 +130,7 @@ This project also utilizes the Solidity 2 UML tool available at
   ```
 
 - To generate a class diagram:
+
   ```
   $ sol2uml class ./src/UniswapV3Swap.sol
   ```
