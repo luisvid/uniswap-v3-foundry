@@ -2,6 +2,7 @@ name: "CI"
 
 env:
   API_KEY_ALCHEMY: ${{ secrets.API_KEY_ALCHEMY }}
+  MAINNET_FORK_URL: ${{ secrets.MAINNET_FORK_URL }}
   FOUNDRY_PROFILE: "ci"
 
 on:
