@@ -1,10 +1,10 @@
 {
-  "name": "@prb/foundry-template",
-  "description": "Foundry-based template for developing Solidity smart contracts",
+  "name": "@luisvid/uniswap-v3-foundry",
+  "description": "Token Swapping with Uniswap V3 using Foundry",
   "version": "1.0.0",
   "author": {
-    "name": "Paul Razvan Berg",
-    "url": "https://github.com/PaulRBerg"
+    "name": "luisvid",
+    "url": "https://github.com/luisvid"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.1"
