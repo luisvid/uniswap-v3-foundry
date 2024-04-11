@@ -118,7 +118,23 @@ storage layout.
   $ forge script script/Deploy.s.sol --broadcast --fork-url http://localhost:8545
   ```
 
-**Additional Tools**
+### Additional Tools
+
+**Cast Interface**
+
+Another tool I utilized was Cast, a command-line utility part of the Foundry suite, designed for interacting with
+Ethereum smart contracts, sending transactions, and retrieving blockchain data directly from the command line. In this
+instance, I used Cast to obtain the interface of the Uniswap V3 Swap Router. The `cast interface` command generates a
+Solidity interface for deployed contracts.
+
+```bash
+$ cast interface 0xE592427A0AEce92De3Edee1F18E0157C05861564
+```
+
+You provide it with the contract address or the path to an ABI file as an argument. If an address is specified, then the
+ABI is fetched from Etherscan.
+
+**Solidity 2 UML**
 
 This project also utilizes the Solidity 2 UML tool available at
 [https://github.com/naddison36/sol2uml](https://github.com/naddison36/sol2uml).
